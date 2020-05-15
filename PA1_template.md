@@ -10,10 +10,31 @@ output:
 
 Reading data from csv
 
-```{r echo=TRUE}
+
+```r
 df <- read.csv("activity.csv")
 head(df)
+```
+
+```
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+## 4    NA 2012-10-01       15
+## 5    NA 2012-10-01       20
+## 6    NA 2012-10-01       25
+```
+
+```r
 print(colnames(df))
+```
+
+```
+## [1] "steps"    "date"     "interval"
+```
+
+```r
 options(scipen = 100)
 ```
 
@@ -21,7 +42,8 @@ options(scipen = 100)
 
 ## What is mean total number of steps taken per day?
 
-```{r echo=TRUE}
+
+```r
 total.steps <- tapply(df$steps, df$date, sum, na.rm = T)
 hist(total.steps, 
 	main = "Histogram of total steps per day", 
@@ -30,16 +52,22 @@ hist(total.steps,
 	breaks = 20,
 	col = "green"
 )
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+```r
 steps.mean <- mean(total.steps, na.rm = T)
 steps.median <- median(total.steps, na.rm = T)
 ```
 
-The mean number of steps taken each day is `r round(steps.mean, 0)`, the median number is `r round(steps.median, 0)`. 
+The mean number of steps taken each day is 9354, the median number is 10395. 
 
 
 ## What is the average daily activity pattern?
 
-```{r echo=TRUE}
+
+```r
 steps.interval <- aggregate(df$steps, list(df$interval), mean, na.rm = T)
 colnames(steps.interval) <- c("interval", "steps")
 plot(steps.interval, type = "l",
@@ -49,16 +77,18 @@ plot(steps.interval, type = "l",
 )
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
 5-minute interval, on average across all the days in the dataset that contains the maximum number of steps
 
-```{r}
+
+```r
 max <- steps.interval[which.max(steps.interval$steps),]
 ```
 
-Maximum average is in the interval `r max$interval`
+Maximum average is in the interval 835
 
 ## Imputing missing values
-
 
 
 
