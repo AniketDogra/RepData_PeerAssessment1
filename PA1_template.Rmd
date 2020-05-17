@@ -21,6 +21,8 @@ options(scipen = 100)
 
 ## What is mean total number of steps taken per day?
 
+
+
 ```{r echo=TRUE}
 total.steps <- tapply(df$steps, df$date, sum, na.rm = T)
 hist(total.steps, 
@@ -59,7 +61,55 @@ Maximum average is in the interval `r max$interval`
 
 ## Imputing missing values
 
+Number of NA Values
 
+```{r}
+nrow(df[is.na(df$steps), ])
+```
+
+Loading important libraries. Imputing data using impute function. 
+
+```{r}
+library(scales)
+library(Hmisc)
+
+imputedData <- df
+imputedData$steps <- impute(df$steps, fun = mean)
+head(imputedData)
+```
+
+Make a histogram of the total number of steps taken each day 
+
+```{r}
+total.na.steps <- tapply(imputedData$steps, imputedData$date, sum)
+hist(total.na.steps, 
+	main = "Histogram of total steps per day", 
+	xlab = "Total steps per day", 
+	ylab = "Frequency", 
+	breaks = 20,
+	col = "red"
+)
+steps.mean <- mean(total.na.steps)
+steps.median <- median(total.na.steps)
+```
+
+The mean number of steps taken each day is `r round(steps.mean, 0)`, the median number is `r round(steps.median, 0)`. 
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+```{r}
+imputedData$datetype <- ifelse(as.POSIXlt(imputedData$date)$wday %in% c(0,6), 'weekend', 'weekday') 
+```
+
+### Make a panel plot
+
+```{r}
+averageActivity <- aggregate(steps ~ interval + datetype, data = imputedData, mean)
+ggplot(averageActivity, aes(interval, steps)) + 
+  geom_line() + 
+  facet_grid(datetype ~ .) + 
+  xlab("5-minute interval") + 
+  ylab("avarage number of steps")
+```
+
